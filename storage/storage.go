@@ -1,36 +1,35 @@
 package storage
 
-func Get(id int) string {
-	return mainStore.get(id)
-}
-
-func Put(value string) int {
-	return mainStore.put(value)
-}
-
-func Delete(id int) {
-	mainStore.delete(id)
-}
+import "errors"
 
 type storage struct {
-	innerRepository map[int]string
-	currentId       int
+	data map[interface{}]interface{}
 }
 
-var mainStore = storage{make(map[int]string), 0}
+var notFound = errors.New("key doesn't exist")
 
-func (store storage) get(id int) string {
-	return store.innerRepository[id]
+func New() storage {
+	return storage{make(map[interface{}]interface{})}
 }
 
-func (store storage) put(value string) int {
-	id := store.currentId
-	store.currentId++
+func (store storage) Get(key interface{}) (interface{}, error) {
+	val, found := store.data[key]
 
-	store.innerRepository[id] = value
-	return id
+	if !found {
+		return nil, notFound
+	}
+
+	return val, nil
 }
 
-func (store storage) delete(id int) {
-	delete(store.innerRepository, id)
+func (store storage) GetAll() map[interface{}]interface{} {
+	return store.data
+}
+
+func (store storage) Put(key interface{}, value interface{}) {
+	store.data[key] = value
+}
+
+func (store storage) Delete(key interface{}) {
+	delete(store.data, key)
 }
