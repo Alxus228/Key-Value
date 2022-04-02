@@ -1,8 +1,6 @@
 package storage
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestGet(t *testing.T) {
 	testStorage := New()
