@@ -108,3 +108,30 @@ func TestPut(t *testing.T) {
 		}
 	}
 }
+
+func TestDelete(t *testing.T) {
+	testStorage := New()
+	testStorage.data = map[interface{}]interface{}{
+		"a":          1,
+		1:            "a",
+		"1":          "b",
+		[1]byte{0x1}: [2]int{1, 2},
+	}
+
+	deleteTests := []struct {
+		key interface{}
+	}{
+		{"a"},
+		{1},
+		{"1"},
+		{[1]byte{0x1}},
+	}
+
+	for _, test := range deleteTests {
+		testStorage.Delete(test.key)
+		_, err := testStorage.Get(test.key)
+		if err == nil {
+			t.Errorf("Element with key %v was not deleted", test.key)
+		}
+	}
+}
