@@ -6,8 +6,13 @@ import (
 )
 
 func main() {
-	fmt.Println(storage.Put("idea"))
-	fmt.Println(storage.Get(0))
-	storage.Delete(0)
-	fmt.Println(storage.Get(0))
+	a := storage.New()
+	a.Put("something", "123")
+	a.Put("bla bla bla", "one-two-three")
+	fmt.Println(a.GetAll())
+	fmt.Println(a.Get("nothing"))
+	fmt.Println(a.Get("something"))
+	a.Delete("something")
+	fmt.Println(a.Get("something"))
+	fmt.Println(a.Get("bla bla bla"))
 }
