@@ -82,3 +82,29 @@ func TestGetAll(t *testing.T) {
 		}
 	}
 }
+
+func TestPut(t *testing.T) {
+	testStorage := New()
+
+	putTests := []struct {
+		keyExpected   interface{}
+		valueExpected interface{}
+	}{
+		{"1", 0},
+		{"1", 1},
+		{2, "a"},
+		{"2", [2]string{"a", "b"}},
+		{[1]byte{0x1}, [2]int{1, 2}},
+	}
+
+	for _, test := range putTests {
+		testStorage.Put(test.keyExpected, test.valueExpected)
+
+		if testStorage.data[test.keyExpected] != test.valueExpected {
+			t.Errorf("Expected value: %v, but got: %v, and the key is %v",
+				test.valueExpected,
+				testStorage.data[test.keyExpected],
+				test.keyExpected)
+		}
+	}
+}
