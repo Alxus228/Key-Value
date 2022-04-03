@@ -29,3 +29,56 @@ func TestGet(t *testing.T) {
 		}
 	}
 }
+
+func TestGetAll(t *testing.T) {
+	testStorages := []storage{
+		{map[interface{}]interface{}{
+			1:   "a",
+			"1": "b",
+			"a": 1,
+		}},
+		{map[interface{}]interface{}{
+			[3]float64{0.6, 0.9, 0.111}: [2]string{"a", "b"},
+		}},
+		{map[interface{}]interface{}{}},
+	}
+
+	getAllTests := []struct {
+		lengthExpected int
+		keysExpected   []interface{}
+		valuesExpected []interface{}
+	}{
+		{
+			3,
+			[]interface{}{1, "1", "a"},
+			[]interface{}{"a", "b", 1},
+		},
+		{
+			1,
+			[]interface{}{[3]float64{0.6, 0.9, 0.111}},
+			[]interface{}{[2]string{"a", "b"}},
+		},
+		{
+			0,
+			nil,
+			nil,
+		},
+	}
+
+	for i, test := range getAllTests {
+		getAllResult := testStorages[i].GetAll()
+		if len(getAllResult) != test.lengthExpected {
+			t.Errorf("Expected array length: %v, but got: %v", test.lengthExpected, len(getAllResult))
+		}
+		j := 0
+		for key, value := range getAllResult {
+			if key != test.keysExpected[j] {
+				t.Errorf("Expected key: %v, but got: %v", test.keysExpected[j], key)
+			}
+			if value != test.valuesExpected[j] {
+				t.Errorf("Expected value: %v, but got: %v", test.valuesExpected[j], value)
+			}
+			j++
+		}
+	}
+}
