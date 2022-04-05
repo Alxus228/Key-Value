@@ -1,18 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"github.com/Alxus228/Key-Value/server"
 	"github.com/Alxus228/Key-Value/storage"
 )
 
 func main() {
-	a := storage.New()
-	a.Put("something", "123")
-	a.Put("bla bla bla", "one-two-three")
-	fmt.Println(a.GetAll())
-	fmt.Println(a.Get("nothing"))
-	fmt.Println(a.Get("something"))
-	a.Delete("something")
-	fmt.Println(a.Get("something"))
-	fmt.Println(a.Get("bla bla bla"))
+	//using interface, because we might switch between storage implementations in future
+	var a server.Storage = storage.New()
+	err := server.Run(&a)
+
+	if err != nil {
+		panic(err)
+	}
 }
