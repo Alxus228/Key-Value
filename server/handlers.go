@@ -15,7 +15,9 @@ type Storage interface {
 func GetAllHandler(s Storage) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		data := s.GetAll()
+
 		t := template.Must(template.ParseFiles("server/get_all.tmpl"))
+
 		err := t.Execute(writer, data)
 		if err != nil {
 			http.Error(writer, "something went wrong", http.StatusInternalServerError)
