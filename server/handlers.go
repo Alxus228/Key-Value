@@ -16,7 +16,6 @@ type Storage interface {
 
 func GetHandler(s Storage) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-
 		urlVariables := mux.Vars(request)
 
 		key, ok := urlVariables["key"]
@@ -56,7 +55,6 @@ func GetAllHandler(s Storage) http.HandlerFunc {
 
 func PutHandler(s Storage) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-
 		urlVariables := mux.Vars(request)
 
 		key, ok := urlVariables["key"]
@@ -76,6 +74,24 @@ func PutHandler(s Storage) http.HandlerFunc {
 		_, err := s.Get(key)
 		if err != nil {
 			http.Error(writer, "hasn't succeeded to save the value", http.StatusInternalServerError)
+		}
+	}
+}
+
+func DeleteHandler(s Storage) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		urlVariables := mux.Vars(request)
+
+		key, ok := urlVariables["key"]
+		if !ok {
+			http.Error(writer, "key is empty in the URL", http.StatusBadRequest)
+			return
+		}
+
+		s.Delete(key)
+		_, err := s.Get(key)
+		if err == nil {
+			http.Error(writer, "hasn't succeeded to delete the key", http.StatusInternalServerError)
 		}
 	}
 }
