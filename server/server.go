@@ -9,6 +9,7 @@ func Run(store *Storage) error {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/", GetAllHandler(*store)).Methods("GET")
+	router.HandleFunc("/api/{key}", PutHandler(*store)).Methods("PUT")
 
 	err := http.ListenAndServe(":8080", router)
 	return err
