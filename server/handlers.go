@@ -9,9 +9,9 @@ import (
 
 type Storage interface {
 	Get(interface{}) (interface{}, error)
-	GetAll() map[interface{}]interface{}
-	Put(interface{}, interface{})
-	Delete(interface{})
+	GetAll() (map[interface{}]interface{}, error)
+	Put(interface{}, interface{}) error
+	Delete(interface{}) error
 }
 
 func GetHandler(s Storage) http.HandlerFunc {
@@ -42,8 +42,8 @@ func GetHandler(s Storage) http.HandlerFunc {
 
 func GetAllHandler(s Storage) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		data := s.GetAll()
-		if len(data) == 0 {
+		data, getAllErr := s.GetAll()
+		if getAllErr != nil {
 			http.Error(writer, "storage is empty", http.StatusNotFound)
 			return
 		}
@@ -74,8 +74,7 @@ func PutHandler(s Storage) http.HandlerFunc {
 			return
 		}
 
-		s.Put(key, value)
-		_, err := s.Get(key)
+		err := s.Put(key, value)
 		if err != nil {
 			http.Error(writer, "hasn't succeeded to save the value", http.StatusInternalServerError)
 			return
@@ -101,8 +100,7 @@ func DeleteHandler(s Storage) http.HandlerFunc {
 			return
 		}
 
-		s.Delete(key)
-		_, err := s.Get(key)
+		err := s.Delete(key)
 		if err == nil {
 			http.Error(writer, "hasn't succeeded to delete the key", http.StatusInternalServerError)
 			return
