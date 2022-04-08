@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	//using interface, because we might switch between storage implementations in the future
+	//We use interface here, because we might switch between storage implementations in the future
 	var a server.Storage = storage.New()
 	err := server.Run(&a)
 

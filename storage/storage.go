@@ -14,7 +14,7 @@ import "errors"
 // Type storage is a key-value map with methods that allows you to concurrently
 // change data, and do it safely.
 //
-// -Concurrency will be implemented in sub-task4-
+// -Concurrency will be implemented in sub-task5-
 type storage struct {
 	data map[interface{}]interface{}
 }
