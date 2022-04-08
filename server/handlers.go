@@ -43,6 +43,10 @@ func GetHandler(s Storage) http.HandlerFunc {
 func GetAllHandler(s Storage) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		data := s.GetAll()
+		if len(data) == 0 {
+			http.Error(writer, "storage is empty", http.StatusNotFound)
+			return
+		}
 
 		t := template.Must(template.ParseFiles("server/get_all.tmpl"))
 
@@ -74,7 +78,10 @@ func PutHandler(s Storage) http.HandlerFunc {
 		_, err := s.Get(key)
 		if err != nil {
 			http.Error(writer, "hasn't succeeded to save the value", http.StatusInternalServerError)
+			return
 		}
+
+		writer.WriteHeader(http.StatusCreated)
 	}
 }
 
@@ -88,10 +95,19 @@ func DeleteHandler(s Storage) http.HandlerFunc {
 			return
 		}
 
+		_, getErr := s.Get(key)
+		if getErr != nil {
+			http.Error(writer, "such key doesn't exist", http.StatusNotFound)
+			return
+		}
+
 		s.Delete(key)
 		_, err := s.Get(key)
 		if err == nil {
 			http.Error(writer, "hasn't succeeded to delete the key", http.StatusInternalServerError)
+			return
 		}
+
+		writer.WriteHeader(http.StatusNoContent)
 	}
 }
