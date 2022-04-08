@@ -22,6 +22,7 @@ type storage struct {
 var notFound = errors.New("key doesn't exist")
 var emptyStorage = errors.New("storage is empty")
 var couldntDelete = errors.New("deletion hasn't been successful")
+var creationFailed = errors.New("item hasn't been created")
 
 // New returns an empty storage variable, for which memory is allocated for the data.
 func New() storage {
@@ -51,7 +52,10 @@ func (store storage) GetAll() (map[interface{}]interface{}, error) {
 func (store storage) Put(key interface{}, value interface{}) error {
 	store.data[key] = value
 	_, err := store.Get(key)
-	return err
+	if err != nil {
+		return creationFailed
+	}
+	return nil
 }
 
 // Delete method annihilates a key-value pair, according to the key, that it receives.
