@@ -14,12 +14,15 @@ import "errors"
 // Type storage is a key-value map with methods that allows you to concurrently
 // change data, and do it safely.
 //
-// -Concurrency will be implemented in sub-task4-
+// -Concurrency will be implemented in sub-task5-
 type storage struct {
 	data map[interface{}]interface{}
 }
 
 var notFound = errors.New("key doesn't exist")
+var emptyStorage = errors.New("storage is empty")
+var couldntDelete = errors.New("deletion hasn't been successful")
+var creationFailed = errors.New("item hasn't been created")
 
 // New returns an empty storage variable, for which memory is allocated for the data.
 func New() storage {
@@ -38,16 +41,29 @@ func (store storage) Get(key interface{}) (interface{}, error) {
 }
 
 // GetAll method returns the whole key-value collection.
-func (store storage) GetAll() map[interface{}]interface{} {
-	return store.data
+func (store storage) GetAll() (map[interface{}]interface{}, error) {
+	if len(store.data) == 0 {
+		return nil, emptyStorage
+	}
+	return store.data, nil
 }
 
 // Put method creates or rewrites key-value pair in storage.
-func (store storage) Put(key interface{}, value interface{}) {
+func (store storage) Put(key interface{}, value interface{}) error {
 	store.data[key] = value
+	_, err := store.Get(key)
+	if err != nil {
+		return creationFailed
+	}
+	return nil
 }
 
 // Delete method annihilates a key-value pair, according to the key, that it receives.
-func (store storage) Delete(key interface{}) {
+func (store storage) Delete(key interface{}) error {
 	delete(store.data, key)
+	_, deletionErr := store.Get(key)
+	if deletionErr == nil {
+		return couldntDelete
+	}
+	return nil
 }

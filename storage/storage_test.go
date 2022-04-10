@@ -66,7 +66,7 @@ func TestGetAll(t *testing.T) {
 	}
 
 	for i, test := range getAllTests {
-		getAllResult := testStorages[i].GetAll()
+		getAllResult, _ := testStorages[i].GetAll()
 		if len(getAllResult) != test.lengthExpected {
 			t.Errorf("Expected array length: %v, but got: %v", test.lengthExpected, len(getAllResult))
 		}
@@ -128,9 +128,8 @@ func TestDelete(t *testing.T) {
 	}
 
 	for _, test := range deleteTests {
-		testStorage.Delete(test.key)
-		_, err := testStorage.Get(test.key)
-		if err == nil {
+		err := testStorage.Delete(test.key)
+		if err != nil {
 			t.Errorf("Element with key %v was not deleted", test.key)
 		}
 	}
