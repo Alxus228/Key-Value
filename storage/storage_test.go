@@ -129,7 +129,7 @@ func TestDelete(t *testing.T) {
 
 	for _, test := range deleteTests {
 		err := testStorage.Delete(test.key)
-		if err == nil {
+		if err != nil {
 			t.Errorf("Element with key %v was not deleted", test.key)
 		}
 	}
