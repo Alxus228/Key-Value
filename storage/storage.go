@@ -9,14 +9,16 @@
 // More information about them, you can find in documentation.
 package storage
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // Type storage is a key-value map with methods that allows you to concurrently
 // change data, and do it safely.
-//
-// -Concurrency will be implemented in sub-task5-
 type storage struct {
-	data map[interface{}]interface{}
+	data  map[interface{}]interface{}
+	mutex sync.RWMutex
 }
 
 var notFound = errors.New("key doesn't exist")
@@ -26,31 +28,39 @@ var creationFailed = errors.New("item hasn't been created")
 
 // New returns an empty storage variable, for which memory is allocated for the data.
 func New() storage {
-	return storage{make(map[interface{}]interface{})}
+	return storage{make(map[interface{}]interface{}), sync.RWMutex{}}
 }
 
 // Get method returns a value from data by key, and also any error encountered.
 func (store storage) Get(key interface{}) (interface{}, error) {
+	store.mutex.RLock()
 	val, found := store.data[key]
 
 	if !found {
 		return nil, notFound
 	}
-
+	store.mutex.RUnlock()
 	return val, nil
 }
 
 // GetAll method returns the whole key-value collection.
 func (store storage) GetAll() (map[interface{}]interface{}, error) {
-	if len(store.data) == 0 {
+	store.mutex.RLock()
+	var data = store.data
+	store.mutex.RUnlock()
+
+	if len(data) == 0 {
 		return nil, emptyStorage
 	}
-	return store.data, nil
+	return data, nil
 }
 
 // Put method creates or rewrites key-value pair in storage.
 func (store storage) Put(key interface{}, value interface{}) error {
+	store.mutex.Lock()
 	store.data[key] = value
+	store.mutex.Unlock()
+
 	_, err := store.Get(key)
 	if err != nil {
 		return creationFailed

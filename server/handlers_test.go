@@ -27,6 +27,7 @@ func TestGetHandler(t *testing.T) {
 
 	if w.Code != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(w.Body)
+		t.Error(testStorage)
 		t.Error(string(bodyBytes))
 		t.Errorf("Expected status code %d, but got: %d", http.StatusOK, w.Code)
 	}
