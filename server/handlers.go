@@ -101,6 +101,7 @@ func putHandler(s Storage) http.HandlerFunc {
 			return
 		}
 
+		logTransaction("PUT", key, value)
 		writer.WriteHeader(http.StatusCreated)
 	}
 }
@@ -127,11 +128,12 @@ func deleteHandler(s Storage) http.HandlerFunc {
 		}
 
 		err := s.Delete(key)
-		if err == nil {
+		if err != nil {
 			http.Error(writer, "hasn't succeeded to delete the key", http.StatusInternalServerError)
 			return
 		}
 
+		logTransaction("DELETE", key, nil)
 		writer.WriteHeader(http.StatusNoContent)
 	}
 }
