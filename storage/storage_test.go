@@ -1,6 +1,9 @@
 package storage
 
-import "testing"
+import (
+	"sync"
+	"testing"
+)
 
 func TestGet(t *testing.T) {
 	testStorage := New()
@@ -36,11 +39,11 @@ func TestGetAll(t *testing.T) {
 			1:   "a",
 			"1": "b",
 			"a": 1,
-		}},
+		}, sync.RWMutex{}},
 		{map[interface{}]interface{}{
 			[3]float64{0.6, 0.9, 0.111}: [2]string{"a", "b"},
-		}},
-		{map[interface{}]interface{}{}},
+		}, sync.RWMutex{}},
+		{map[interface{}]interface{}{}, sync.RWMutex{}},
 	}
 
 	getAllTests := []struct {
