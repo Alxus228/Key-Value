@@ -19,6 +19,8 @@ func Run(store *Storage) error {
 	router.HandleFunc("/api/{key}", putHandler(*store)).Methods("PUT")
 	router.HandleFunc("/api/{key}", deleteHandler(*store)).Methods("DELETE")
 
+	go restoreData()
+
 	err := http.ListenAndServe(":8080", router)
 	return err
 }
