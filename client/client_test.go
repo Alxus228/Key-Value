@@ -37,7 +37,6 @@ func BenchmarkSequentially(b *testing.B) {
 
 func BenchmarkConcurrently(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-
 		var wg sync.WaitGroup
 		for j := 0; j < *loc; j++ {
 			wg.Add(1)
