@@ -23,9 +23,9 @@ func GetAll() (*http.Response, error) {
 	client := newClient()
 
 	address := serverAddress + "/api/"
-	req, err := http.NewRequest(http.MethodPut, address, nil)
+	req, err := http.NewRequest(http.MethodGet, address, nil)
 	if err != nil {
-		log.Println("Error during put request initialization.")
+		log.Println("Error during GET all request initialization.")
 		log.Println(err)
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func Put(key interface{}, value interface{}) (*http.Response, error) {
 	address := serverAddress + "/api/" + fmt.Sprintf("%v", key)
 	req, err := http.NewRequest(http.MethodPut, address, bytes.NewBuffer(json))
 	if err != nil {
-		log.Println("Error during put request initialization.")
+		log.Println("Error during PUT request initialization.")
 		log.Println(err)
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func Delete(key interface{}) (*http.Response, error) {
 	address := serverAddress + "/api/" + fmt.Sprintf("%v", key)
 	req, err := http.NewRequest(http.MethodDelete, address, nil)
 	if err != nil {
-		log.Println("Error during delete request initialization.")
+		log.Println("Error during DELETE request initialization.")
 		log.Println(err)
 		return nil, err
 	}
