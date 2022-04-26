@@ -63,7 +63,8 @@ func (store *storage) Put(key interface{}, value interface{}) error {
 
 	_, err := store.Get(key)
 	if err != nil {
-		log.Println("Failed item creation: ", err)
+		log.Println("Failed item creation.")
+		log.Println(err)
 		return creationFailed
 	}
 	return nil
@@ -74,6 +75,7 @@ func (store *storage) Delete(key interface{}) error {
 	delete(store.data, key)
 	_, deletionErr := store.Get(key)
 	if deletionErr == nil {
+		log.Println("Failed item deletion.")
 		return couldntDelete
 	}
 	return nil

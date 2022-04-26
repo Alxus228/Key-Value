@@ -26,7 +26,8 @@ func Put(key interface{}, value interface{}) (*http.Response, error) {
 	address := serverAddress + "/api/" + fmt.Sprintf("%v", key)
 	req, err := http.NewRequest(http.MethodPut, address, bytes.NewBuffer(json))
 	if err != nil {
-		log.Fatal("Error during put request initialization: ", err)
+		log.Println("Error during put request initialization.")
+		log.Println(err)
 		return nil, err
 	}
 
@@ -40,7 +41,8 @@ func Delete(key interface{}) (*http.Response, error) {
 	address := serverAddress + "/api/" + fmt.Sprintf("%v", key)
 	req, err := http.NewRequest(http.MethodDelete, address, nil)
 	if err != nil {
-		log.Fatal("Error during delete request initialization: ", err)
+		log.Println("Error during delete request initialization.")
+		log.Println(err)
 		return nil, err
 	}
 
