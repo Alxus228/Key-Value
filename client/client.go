@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,13 +11,31 @@ import (
 
 const serverAddress string = "https://localhost:443"
 
+func newClient() *http.Client {
+	return &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+}
+
 func GetAll() (*http.Response, error) {
-	resp, err := http.Get(serverAddress + "/api/")
+	client := newClient()
+
+	address := serverAddress + "/api/"
+	req, err := http.NewRequest(http.MethodPut, address, nil)
+	if err != nil {
+		log.Println("Error during put request initialization.")
+		log.Println(err)
+		return nil, err
+	}
+
+	resp, err := client.Do(req)
 	return resp, err
 }
 
 func Put(key interface{}, value interface{}) (*http.Response, error) {
-	client := &http.Client{}
+	client := newClient()
 
 	json, err := json.Marshal(value)
 	if err != nil {
@@ -36,7 +55,7 @@ func Put(key interface{}, value interface{}) (*http.Response, error) {
 }
 
 func Delete(key interface{}) (*http.Response, error) {
-	client := &http.Client{}
+	client := newClient()
 
 	address := serverAddress + "/api/" + fmt.Sprintf("%v", key)
 	req, err := http.NewRequest(http.MethodDelete, address, nil)
