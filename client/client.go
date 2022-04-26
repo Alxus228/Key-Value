@@ -50,6 +50,7 @@ func Put(key interface{}, value interface{}) (*http.Response, error) {
 		return nil, err
 	}
 
+	req.Header.Set("Disable-Logging", "true")
 	resp, err := client.Do(req)
 	return resp, err
 }
@@ -65,6 +66,7 @@ func Delete(key interface{}) (*http.Response, error) {
 		return nil, err
 	}
 
+	req.Header.Set("Disable-Logging", "true")
 	resp, err := client.Do(req)
 	return resp, err
 }

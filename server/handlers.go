@@ -115,7 +115,11 @@ func putHandler(s Storage) http.HandlerFunc {
 			return
 		}
 
-		logTransaction("PUT", key, value)
+		loggingHeader := request.Header.Get("Disable-Logging")
+		if loggingHeader != "true" {
+			logTransaction("PUT", key, value)
+		}
+
 		log.Println("item", key, "successfully created.")
 		writer.WriteHeader(http.StatusCreated)
 	}
@@ -153,7 +157,11 @@ func deleteHandler(s Storage) http.HandlerFunc {
 			return
 		}
 
-		logTransaction("DELETE", key, nil)
+		loggingHeader := request.Header.Get("Disable-Logging")
+		if loggingHeader != "true" {
+			logTransaction("DELETE", key, nil)
+		}
+
 		log.Println("item ", key, " successfully deleted.")
 		writer.WriteHeader(http.StatusNoContent)
 	}
