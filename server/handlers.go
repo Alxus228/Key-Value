@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -69,6 +70,7 @@ func getAllHandler(s Storage) http.HandlerFunc {
 
 		err := t.Execute(writer, data)
 		if err != nil {
+			log.Println("Internal error during get all request: ", err)
 			http.Error(writer, "something went wrong", http.StatusInternalServerError)
 		}
 	}
@@ -97,6 +99,7 @@ func putHandler(s Storage) http.HandlerFunc {
 
 		err := s.Put(key, value)
 		if err != nil {
+			log.Println("Internal error during put request: ", err)
 			http.Error(writer, "hasn't succeeded to save the value", http.StatusInternalServerError)
 			return
 		}
@@ -129,6 +132,7 @@ func deleteHandler(s Storage) http.HandlerFunc {
 
 		err := s.Delete(key)
 		if err != nil {
+			log.Println("Internal error during delete request: ", err)
 			http.Error(writer, "hasn't succeeded to delete the key", http.StatusInternalServerError)
 			return
 		}

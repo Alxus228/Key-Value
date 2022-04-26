@@ -11,6 +11,7 @@ package storage
 
 import (
 	"errors"
+	"log"
 	"sync"
 )
 
@@ -62,6 +63,7 @@ func (store *storage) Put(key interface{}, value interface{}) error {
 
 	_, err := store.Get(key)
 	if err != nil {
+		log.Println("Failed item creation: ", err)
 		return creationFailed
 	}
 	return nil
