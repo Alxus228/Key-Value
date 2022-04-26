@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-const serverAddress string = "http://localhost:8080"
+const serverAddress string = "https://localhost:443"
 
 func GetAll() (*http.Response, error) {
 	resp, err := http.Get(serverAddress + "/api/")

@@ -21,6 +21,6 @@ func Run(store *Storage) error {
 
 	go restoreData()
 
-	err := http.ListenAndServe(":8080", router)
+	err := http.ListenAndServeTLS(":443", "server.crt", "server.key", router)
 	return err
 }
