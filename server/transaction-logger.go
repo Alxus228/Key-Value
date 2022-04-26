@@ -21,6 +21,7 @@ func restoreData() {
 		file, err = os.Create(path)
 
 		if err != nil {
+			log.Println("File creation failed.")
 			log.Fatal(err)
 		}
 		log.Println("File created")
@@ -29,6 +30,7 @@ func restoreData() {
 		file, err = os.OpenFile(path, os.O_RDWR, 0644)
 
 		if err != nil {
+			log.Println("Couldn't open the file.")
 			log.Fatal(err)
 		}
 		log.Println("File opened")
@@ -46,6 +48,7 @@ func logTransaction(method string, key interface{}, value interface{}) {
 
 	_, err := file.WriteString(transaction)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Writing transaction log into the 'transactions.exe' went wrong.")
+		log.Println(err)
 	}
 }
