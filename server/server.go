@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-// Run creates a new router that listens to the port 8080, and handles requests from the client.
+// Run creates a new router that listens to the port 443, and handles requests from the client.
 func Run(store *Storage) error {
 	router := mux.NewRouter()
 

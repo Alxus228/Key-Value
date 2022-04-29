@@ -1,3 +1,6 @@
+// Package client implements functions that allow us to send http requests to our server.
+//
+// Available methods: GET all, PUT, DELETE.
 package client
 
 import (
@@ -9,8 +12,10 @@ import (
 	"net/http"
 )
 
+// String serverAddress contains an actual path to the server.
 const serverAddress string = "https://localhost:443"
 
+// newClient returns a link of http.Client, that is able to work with the Https protocol.
 func newClient() *http.Client {
 	return &http.Client{
 		Transport: &http.Transport{
@@ -19,6 +24,7 @@ func newClient() *http.Client {
 	}
 }
 
+// GetAll sends a GET http request without url variables and returns a response from the server.
 func GetAll() (*http.Response, error) {
 	client := newClient()
 
@@ -34,6 +40,7 @@ func GetAll() (*http.Response, error) {
 	return resp, err
 }
 
+// Put sends a PUT http request with key and value provided.
 func Put(key interface{}, value interface{}) (*http.Response, error) {
 	client := newClient()
 
@@ -50,11 +57,15 @@ func Put(key interface{}, value interface{}) (*http.Response, error) {
 		return nil, err
 	}
 
+	// We set Disable-Logging header as true here, because we generally use
+	// client package for benchmark tests or to restore data from "transactions.exe"
 	req.Header.Set("Disable-Logging", "true")
+
 	resp, err := client.Do(req)
 	return resp, err
 }
 
+// Delete sends a DELETE http request with a specific key.
 func Delete(key interface{}) (*http.Response, error) {
 	client := newClient()
 
@@ -66,7 +77,9 @@ func Delete(key interface{}) (*http.Response, error) {
 		return nil, err
 	}
 
+	// Same here
 	req.Header.Set("Disable-Logging", "true")
+
 	resp, err := client.Do(req)
 	return resp, err
 }
