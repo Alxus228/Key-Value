@@ -45,6 +45,7 @@ func BenchmarkSequentially(b *testing.B) {
 }
 
 // Test BenchmarkConcurrently does exactly the same what BenchmarkSequentially does,
+//
 // but each PUT request is created in a new goroutine.
 func BenchmarkConcurrently(b *testing.B) {
 	for i := 0; i < b.N; i++ {
