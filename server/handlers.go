@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -34,18 +35,22 @@ func getHandler(s Storage) http.HandlerFunc {
 
 		key, ok := urlVariables["key"]
 		if !ok {
+			log.Println("GET request with no key.")
 			http.Error(writer, "key is empty in the URL", http.StatusBadRequest)
 			return
 		}
 
 		value, err := s.Get(key)
 		if err != nil {
+			log.Println("Item", key, "hasn't been found during GET request.")
+			log.Println(err)
 			http.Error(writer, "such key doesn't exist", http.StatusNotFound)
 			return
 		}
 
 		response, serialErr := json.Marshal(value)
 		if serialErr != nil {
+			log.Println("Serialization failed:", serialErr)
 			http.Error(writer, "serialization error", http.StatusInternalServerError)
 			return
 		}
@@ -61,6 +66,7 @@ func getAllHandler(s Storage) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		data, getAllErr := s.GetAll()
 		if getAllErr != nil {
+			log.Println("GET all request onto an empty storage.")
 			http.Error(writer, "storage is empty", http.StatusNotFound)
 			return
 		}
@@ -69,8 +75,12 @@ func getAllHandler(s Storage) http.HandlerFunc {
 
 		err := t.Execute(writer, data)
 		if err != nil {
+			log.Println("Internal error during get all request.")
+			log.Println(err)
 			http.Error(writer, "something went wrong", http.StatusInternalServerError)
 		}
+
+		log.Println("Successfully returned storage to user.")
 	}
 }
 
@@ -84,6 +94,7 @@ func putHandler(s Storage) http.HandlerFunc {
 
 		key, ok := urlVariables["key"]
 		if !ok {
+			log.Println("PUT request with no key.")
 			http.Error(writer, "key is empty in the URL", http.StatusBadRequest)
 			return
 		}
@@ -91,17 +102,25 @@ func putHandler(s Storage) http.HandlerFunc {
 		var value interface{}
 		deserialErr := json.NewDecoder(request.Body).Decode(&value)
 		if deserialErr != nil {
+			log.Println("Deserialization failed:", deserialErr)
 			http.Error(writer, "data is unserializable", http.StatusBadRequest)
 			return
 		}
 
 		err := s.Put(key, value)
 		if err != nil {
+			log.Println("Internal error during PUT request.")
+			log.Println("Key:", key, "value:", value, "error:", err)
 			http.Error(writer, "hasn't succeeded to save the value", http.StatusInternalServerError)
 			return
 		}
 
-		logTransaction("PUT", key, value)
+		loggingHeader := request.Header.Get("Disable-Logging")
+		if loggingHeader != "true" {
+			logTransaction("PUT", key, value)
+		}
+
+		log.Println("item", key, "successfully created.")
 		writer.WriteHeader(http.StatusCreated)
 	}
 }
@@ -117,23 +136,33 @@ func deleteHandler(s Storage) http.HandlerFunc {
 
 		key, ok := urlVariables["key"]
 		if !ok {
+			log.Println("DELETE request with no key.")
 			http.Error(writer, "key is empty in the URL", http.StatusBadRequest)
 			return
 		}
 
 		_, getErr := s.Get(key)
 		if getErr != nil {
+			log.Println("Item", key, "hasn't been found during DELETE request.")
+			log.Println(getErr)
 			http.Error(writer, "such key doesn't exist", http.StatusNotFound)
 			return
 		}
 
 		err := s.Delete(key)
 		if err != nil {
+			log.Println("Internal error during DELETE request.")
+			log.Println("Key:", key, "error:", err)
 			http.Error(writer, "hasn't succeeded to delete the key", http.StatusInternalServerError)
 			return
 		}
 
-		logTransaction("DELETE", key, nil)
+		loggingHeader := request.Header.Get("Disable-Logging")
+		if loggingHeader != "true" {
+			logTransaction("DELETE", key, nil)
+		}
+
+		log.Println("item ", key, " successfully deleted.")
 		writer.WriteHeader(http.StatusNoContent)
 	}
 }

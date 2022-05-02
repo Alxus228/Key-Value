@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Alxus228/Key-Value/server"
 	"github.com/Alxus228/Key-Value/storage"
+	"log"
 )
 
 func main() {
@@ -11,6 +12,6 @@ func main() {
 	err := server.Run(&a)
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
