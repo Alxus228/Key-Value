@@ -1,10 +1,19 @@
 #!/bin/bash
 
 # Author : https://github.com/Alxus228
+# This script Accepts source text file containing JSON key-value pairs per line;
+# and stores these records on the running key-value server.
 
+# Example of an input file:
+# {"key": 123, "value": "banana"}
+# {"key": "abc", "value": 123456}
+
+# Input should be provided only according to the standard, given in the example.
+
+# Start of the script:
 # Reading all lines from the file into a variable
 input=`cat $1`
-
+# Defining an associative array and temporary variables, to withdraw needed info from the input.
 flag=0
 key=0
 value=0
@@ -37,12 +46,11 @@ do
   fi
 done
 
-#url=169.254.245.82:443
+# This is the server address.
 url=https://localhost:443
 
 # Putting all records into the server via curl command
 for key in ${!pair[@]}
 do
-  #echo $key ${pair[$key]}
   curl -X PUT ${url}/api/${key} -d ${pair[$key]}
 done
